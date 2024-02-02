@@ -1,0 +1,47 @@
+name: Demo Workflow
+on: 
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      print_tags:
+        description: 'True to print to STDOUT'
+        required: true
+        type: boolean
+      tags:
+        description: 'Test scenario tags'
+        required: true
+        type: string
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
+jobs:
+  print-tag:
+    runs-on: ubuntu-latest
+    if:  ${{ inputs.print_tags }} 
+    steps:
+      - name: Print the input tag to STDOUT
+        run: echo  The tags are ${{ inputs.tags }} 
+  Demo-Job:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Check out repository code
+       uses: actions/checkout@v4
+     - name: List files in the repository
+       run: |
+         echo "Listing files in the repository(${{ github.workspace }}).."
+         ls ${{ github.workspace }}
+     - run: echo "Job's status is ${{ job.status }}"
+     - name: Faking an error
+       run: |
+          echo "Before Faking an error"
+          exit 1
+          echo "After faking an error"
